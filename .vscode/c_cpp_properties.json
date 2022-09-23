@@ -10,6 +10,9 @@
             "includePath": [
                 "c:/Users/kevin/Documents/PlatformIO/Projects/GEE-S/include",
                 "c:/Users/kevin/Documents/PlatformIO/Projects/GEE-S/src",
+                "c:/Users/kevin/Documents/PlatformIO/Projects/GEE-S/.pio/libdeps/esp32doit-devkit-v1/DHT sensor library for ESPx",
+                "c:/Users/kevin/Documents/PlatformIO/Projects/GEE-S/.pio/libdeps/esp32doit-devkit-v1/LiquidCrystal_I2C",
+                "C:/Users/kevin/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                 "C:/Users/kevin/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
                 "C:/Users/kevin/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include",
                 "C:/Users/kevin/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include/esp_additions/freertos",
@@ -229,7 +232,6 @@
                 "C:/Users/kevin/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
                 "C:/Users/kevin/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src",
                 "C:/Users/kevin/.platformio/packages/framework-arduinoespressif32/libraries/WiFiProv/src",
-                "C:/Users/kevin/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                 ""
             ],
             "browse": {
@@ -237,6 +239,9 @@
                 "path": [
                     "c:/Users/kevin/Documents/PlatformIO/Projects/GEE-S/include",
                     "c:/Users/kevin/Documents/PlatformIO/Projects/GEE-S/src",
+                    "c:/Users/kevin/Documents/PlatformIO/Projects/GEE-S/.pio/libdeps/esp32doit-devkit-v1/DHT sensor library for ESPx",
+                    "c:/Users/kevin/Documents/PlatformIO/Projects/GEE-S/.pio/libdeps/esp32doit-devkit-v1/LiquidCrystal_I2C",
+                    "C:/Users/kevin/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                     "C:/Users/kevin/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/newlib/platform_include",
                     "C:/Users/kevin/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include",
                     "C:/Users/kevin/.platformio/packages/framework-arduinoespressif32/tools/sdk/esp32/include/freertos/include/esp_additions/freertos",
@@ -456,7 +461,6 @@
                     "C:/Users/kevin/.platformio/packages/framework-arduinoespressif32/libraries/WiFi/src",
                     "C:/Users/kevin/.platformio/packages/framework-arduinoespressif32/libraries/WiFiClientSecure/src",
                     "C:/Users/kevin/.platformio/packages/framework-arduinoespressif32/libraries/WiFiProv/src",
-                    "C:/Users/kevin/.platformio/packages/framework-arduinoespressif32/libraries/Wire/src",
                     ""
                 ]
             },
