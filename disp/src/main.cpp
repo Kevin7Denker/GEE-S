@@ -3,7 +3,6 @@
 #include <HTTPClient.h>
 #include "DHTesp.h"
 
-
 #define DELAY 7000
 
 //Pinagem
