@@ -1,9 +1,20 @@
 #include <LiquidCrystal_I2C.h>
 #include <WiFi.h>
 #include <HTTPClient.h>
+#include <MQUnifiedsensor.h>
 #include "DHTesp.h"
 
 #define DELAY 7000
+
+#define placa "ESP-32"
+#define Voltage_Resolution 5
+#define pin 15 //Analog input 4 of your arduino
+#define type "MQ-4" //MQ4
+#define ADC_Bit_Resolution 10 // For arduino UNO/MEGA/NANO
+#define RatioMQ4CleanAir 4.4  //RS / R0 = 4.4 ppm
+
+//Sensor de Metano
+MQUnifiedsensor mq4(placa, Voltage_Resolution, ADC_Bit_Resolution, pin, type);
 
 //Pinagem
 const int DHT_PIN = 2;
@@ -27,8 +38,8 @@ void setup(){
   temp.setup(DHT_PIN, DHTesp::DHT22);
   
   // Id da rede e Senha para conexão
-  char* ssid = "";
-  char* password = "";
+  char* ssid = "infoprojetos";
+  char* password = "sistemas987";
 
   WiFi.begin(ssid, password);
   while(WiFi.status() != WL_CONNECTED){
@@ -39,6 +50,7 @@ void setup(){
   password = "null";
   Serial.print("Conectado com Sucesso");
 
+  mq4.init();
   lcd.init();                     
   lcd.backlight();
 }
@@ -58,6 +70,7 @@ void loop(){
   TempAndHumidity  data = temp.getTempAndHumidity();
   Serial.println("Temperatura: " + String(data.temperature, 2) + "°C");
   Serial.println("Umidade: " + String(data.humidity, 1) + "%");
+  Serial.println("Metano: " + String(mq4.readSensor()));
   Serial.println("---------------");
 
   // Tela LCD
