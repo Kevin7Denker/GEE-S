@@ -7,7 +7,7 @@ class Record{
     }
 
     static fromJson(data){
-        return new Record(data['ordem'],data['co2'],data['metano'],data['temperatura']);
+        return new Record(data['co2'],data['co2'],data['metano'],data['temperatura']);
     }
 
 }
@@ -46,6 +46,7 @@ class RecordsRepository{
 
     async getData(){
         this.data = await this.api.fetch();
+        console.log(this.data);
         this.data.sort((d1,d2)=>{
             return d1.ordem - d2.ordem;
         });
@@ -97,12 +98,7 @@ class DrawChart{
             type: 'line',
             data: {
                 labels: [],
-                datasets: [{
-                    label: 'Co2',
-                    data: [],
-                    borderColor: 'rgb(75, 192, 192)',
-                    tension: 0.1,
-                },
+                datasets: [
                 {
                     label: 'Temperature',
                     data: [],
@@ -124,12 +120,10 @@ class DrawChart{
     async update(){
         await this.repository.getData();
         let labels = await this.repository.getOrdem();
-        let co2Samples = await this.repository.getCo2Samples();
         let temperatureSamples = await this.repository.getTemperatureSamples();
         
         this.chart.data.labels = labels;
-        this.chart.data.datasets[0].data = co2Samples;
-        this.chart.data.datasets[1].data = temperatureSamples;
+        this.chart.data.datasets[0].data = temperatureSamples;
         
         this.chart.update();
 
