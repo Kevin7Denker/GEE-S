@@ -1,84 +1,147 @@
+/************* Bibliotecas *************/ 
+#include <Arduino.h>
+#include <api.h>
+#include <Adafruit_Sensor.h>
+#include <Wire.h>
 #include <LiquidCrystal_I2C.h>
 #include <WiFi.h>
 #include <HTTPClient.h>
 #include <MQUnifiedsensor.h>
 #include "DHTesp.h"
 
-#define DELAY 7000
+/************* User *************/ 
+using namespace std;
 
-#define placa "ESP-32"
-#define Voltage_Resolution 5
-#define pin 15 //Analog input 4 of your arduino
-#define type "MQ-4" //MQ4
-#define ADC_Bit_Resolution 10 // For arduino UNO/MEGA/NANO
-#define RatioMQ4CleanAir 4.4  //RS / R0 = 4.4 ppm
+/************************ Configuração ************************************/
+#define         Board                   ("ESP32") // definição do modelo de placa
+#define         Type                    ("MQ-4")  // definição do modelo do sensor
+#define         Voltage_Resolution      (3.3)     // Voltagem do sensor 
+#define         ADC_Bit_Resolution      (12)      // Configuração da Resolução
+#define         RatioMQ4CleanAir        (4.4)     // R0 = 60 ppm 
 
-//Sensor de Metano
-MQUnifiedsensor mq4(placa, Voltage_Resolution, ADC_Bit_Resolution, pin, type);
 
-//Pinagem
-const int DHT_PIN = 2;
+/************* Pinagem *************/
+#define MET_SENSOR 35
+const int DHT_PIN = 33;
 
-//Posições do display lcd (X & Y)
-int lcdColumns = 20;
-int lcdRows = 4;
+/************* Componentes *************/
 
-//Sensores
-DHTesp temp;
-LiquidCrystal_I2C lcd(0x27, lcdColumns, lcdRows);
+DHTesp dht; // Sensor de Umidade e temperatura
+LiquidCrystal_I2C lcd(0x3f, 20, 4); // Display lcd
+MQUnifiedsensor MQ4(placa, Voltage_Resolution, ADC_Bit_Resolution, pin, type); // Sensor de Metano
 
-//Conexão
-String serverName = "https://gees-f59cb-default-rtdb.firebaseio.com/dados.json";
-unsigned long lastUpdate = 0;
+/************* Configuração de Rede *************/
+const char* ssid = "infoprojetos";    // Nome da rede
+const char* password = "sistemas987"; // Senha da rede
+
+/************* Configuração da API *************/
+API api("https://gees-f59cb-default-rtdb.firebaseio.com/","dados.json"); 
+
+template<typename Base, typename T>
+inline bool instanceof(const T *ptr) {
+  return dynamic_cast<const Base*>(ptr) != nullptr;
+}
+
+/************* Leitor de Metano *************/
+float LtMetano(){
+  MQ4.update();
+  float met = MQ4.readSensor();
+  return met; 
+}
+
+/************* Leitor de Temperatura *************/
+float LtTemp(){
+  float temp = dht.getTemperature();
+  return temp;
+}
+
+/************* Leitor de Umidade *************/
+float LtUmidade(){
+  float umi = dht.getHumidity();
+  return umi;
+}
+
+/************* Leitor de Umidade *************/
+float LtCO2(){
+  return 0.0;
+}
+
+/************* Envio dos Dados *************/
+float envio(Sample sample){
+  Serial.println("Enviando...");
+  Serial.println(String(sample.toJson().c_str()));
+  Response resp = api.send(sample);
+  Serial.println(resp.getMsg());
+}
 
 void setup(){
   
-  Serial.begin(115200);
+  Serial.begin(9600);
 
-  temp.setup(DHT_PIN, DHTesp::DHT22);
-  
-  // Id da rede e Senha para conexão
-  char* ssid = "infoprojetos";
-  char* password = "sistemas987";
+/************* Inicializando Componentes  *************/
+  lcd.init();                         // Display LCD
+  lcd.backlight();                    // Backlight do display
+  dht.setup(DHT_PIN, DHTesp::DHT22);  // Sensor de umidade e temperatura
 
-  WiFi.begin(ssid, password);
-  while(WiFi.status() != WL_CONNECTED){
+ /******** Configurando ********/
+  MQ4.setRegressionMethod(1); 
+  MQ4.setA(1012.7); 
+  MQ4.setB(-2.786); // Configura a equação para calcular a concentração de CH4
+  MQ4.init();       // Sensor de metano
+ 
+ /******** Calibração ********/
+  Serial.print("Calibrando...");
+  float calcR0 = 0;
+  for(int i = 1; i<=10; i ++)
+  {
+    MQ4.update(); // 
+    calcR0 += MQ4.calibrate(RatioMQ4CleanAir);
     Serial.print(".");
-    delay(1000);
   }
-  ssid = "null";
-  password = "null";
-  Serial.print("Conectado com Sucesso");
+  MQ4.setR0(calcR0/10);
+  Serial.printf("  done!. %f",(calcR0/10));
 
-  mq4.init();
-  lcd.init();                     
-  lcd.backlight();
+/************* Conectanto a Rede  *************/  
+  WiFi.begin(ssid, password);     // Passando as inforamações para conexão
+  Serial.println(Conectando...);
+  
+  while (WiFi.status != WL_CONNECTED){
+    delay(500);
+    Serial.print(".");
+  }
+  
+  Serial.println("");
+  Serial.print("Endereço IP: ");
+  Serial.println(WiFi.localIP()); // Entrega o Endereço IP gerado
+
 }
 
 void loop(){
 
-  long unsigned int now = millis();
-  if((now - lastUpdate) > DELAY){
-    if(WiFi.status() == WL_CONNECTED){
-      HTTPClient http;
-      http.begin(serverName.c_str());
-      http.addHeader("Content-Type", "application/json");
-    }
-  }
+  string tempo; // Precisa adicionar o RTC
 
-  // Sensor de Temperatura
-  TempAndHumidity  data = temp.getTempAndHumidity();
-  Serial.println("Temperatura: " + String(data.temperature, 2) + "°C");
-  Serial.println("Umidade: " + String(data.humidity, 1) + "%");
-  Serial.println("Metano: " + String(mq4.readSensor()));
-  Serial.println("---------------");
+/************* Execução *************/  
+  
+  float temperatura = LtTemp();  // Armazena o valor de temperatura
+  float umidade = LtUmidade();   // Armazena o valor de umidade
+  float metano = LtMetano();     // Armazena o valor de metano
+  float CO2 = LtCO2();           // Armazena o valor de co2
+  
+  Sample sample(CO2, metano, temperatura, umidade, to_string(millis()));  // Cria a amostra para envio
 
-  // Tela LCD
-  lcd.setCursor(0, 0);
-  lcd.print("Temperatura: " + String(data.temperature, 2));
-  lcd.setCursor(0, 2);
-  lcd.println("Umidade: " + String(data.humidity, 1));
+  updateLcd(sample);             // Atualiza o display com os valores atuais
+  envio(sample);                 // Envia a amostra para a Api
+
+  delay(10000);                  // Define de quanto em quanto tempo os dados serão atualizados
+}
 
 
-  delay(5000);
+void updateLcd(Sample sample){ 
+  
+/************* Configurando Display  *************/   
+  lcd.clear();
+  lcd.setCursos(0,0);
+  lcd.printf("T:%0.2f U:%0.2f",sample.getTemp(),sample.getUmi());  // Exibe os valores de temperatura e umidade
+  lcd.setCursor(0,1);
+  lcd.printf("M:%0.2f C:%0.2f",sample.getMet(),sample.getCo2());   // Exibe os valores de metano e CO2
 }

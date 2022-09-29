@@ -167,7 +167,7 @@ void loop() {
   //READ CO2
   float co2 = readCO2();
 
-  Sample sample(co2,metano,temp,humd,to_string(millis()));
+  Sample sample (co2,metano,temp,humd,to_string(millis()));
 
   updateLcd(sample);
   sendData(sample);
