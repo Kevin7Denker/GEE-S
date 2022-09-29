@@ -28,7 +28,7 @@ const int DHT_PIN = 33;
 
 DHTesp dht; // Sensor de Umidade e temperatura
 LiquidCrystal_I2C lcd(0x3f, 20, 4); // Display lcd
-MQUnifiedsensor MQ4(placa, Voltage_Resolution, ADC_Bit_Resolution, pin, type); // Sensor de Metano
+MQUnifiedsensor MQ4(Board, Voltage_Resolution, ADC_Bit_Resolution, MET_SENSOR, Type); // Sensor de Metano
 
 /************* Configuração de Rede *************/
 const char* ssid = "infoprojetos";    // Nome da rede
@@ -103,9 +103,9 @@ void setup(){
 
 /************* Conectanto a Rede  *************/  
   WiFi.begin(ssid, password);     // Passando as inforamações para conexão
-  Serial.println(Conectando...);
+  Serial.println("Conectando...");
   
-  while (WiFi.status != WL_CONNECTED){
+  while (WiFi.status() != WL_CONNECTED){
     delay(500);
     Serial.print(".");
   }
@@ -140,7 +140,7 @@ void updateLcd(Sample sample){
   
 /************* Configurando Display  *************/   
   lcd.clear();
-  lcd.setCursos(0,0);
+  lcd.setCursor(0,0);
   lcd.printf("T:%0.2f U:%0.2f",sample.getTemp(),sample.getUmi());  // Exibe os valores de temperatura e umidade
   lcd.setCursor(0,1);
   lcd.printf("M:%0.2f C:%0.2f",sample.getMet(),sample.getCo2());   // Exibe os valores de metano e CO2
