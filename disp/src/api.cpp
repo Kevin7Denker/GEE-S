@@ -2,8 +2,7 @@
 #include "api.h"
 
 /************* Parametros de Comunicação *************/
-API::API(String baseUrl, String endPoint):
-    baseUrl(baseUrl), endpoint(endpoint){}
+API::API(String baseUrl, String endPoint):baseUrl(baseUrl),endPoint(endPoint){}
 
 /************* POST da Amostra *************/
 Response API::send(Sample sample){

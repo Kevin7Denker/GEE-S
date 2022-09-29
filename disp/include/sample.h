@@ -17,10 +17,10 @@ class Sample{
     public:
         Sample(float co2,float metano, float temperatura,float umidade,string timestamp);
         string toJson();
-        float getTemperatura();
-        float getUmidade();
+        float getTemp();
+        float getUmi();
         float getCo2();
-        float getMetano();
+        float getMet();
         string getTimestamp();
 
 };
