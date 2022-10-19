@@ -126,7 +126,9 @@ void setup(){
 
 void loop(){
 
-  string tempo; // Precisa adicionar o RTC
+  // Captura e envio do horario:
+  // clock.getTime(); 
+  // String tempo = clock.hour, ":", clock.minute, ":", clock.second; 
 
 /************* Execução *************/  
   
@@ -135,6 +137,7 @@ void loop(){
   float metano = LtMetano();     // Armazena o valor de metano
   float CO2 = LtCO2();           // Armazena o valor de co2
   
+  // Trocar de to_string(millis) para a variavel tempo;
   Sample sample(CO2, metano, temperatura, umidade, to_string(millis()));  // Cria a amostra para envio
 
   updateLcd(sample);             // Atualiza o display com os valores atuais
