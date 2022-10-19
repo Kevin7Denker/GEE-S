@@ -8,6 +8,7 @@
 #include <HTTPClient.h>
 #include <MQUnifiedsensor.h>
 #include "DHTesp.h"
+#include "DS1307.h"
 
 /************* User *************/ 
 using namespace std;
@@ -18,7 +19,6 @@ using namespace std;
 #define         Voltage_Resolution      (3.3)     // Voltagem do sensor 
 #define         ADC_Bit_Resolution      (12)      // Configuração da Resolução
 #define         RatioMQ4CleanAir        (4.4)     // R0 = 60 ppm 
-
 
 /************* Pinagem *************/
 #define MET_SENSOR 35
@@ -100,6 +100,14 @@ void setup(){
   }
   MQ4.setR0(calcR0/10);
   Serial.printf("  done!. %f",(calcR0/10));
+
+/************* Data *************/
+  
+  /*clock.begin(); inicializar o Real Time Clock */
+	/*clock.fillByYMD(??,?,??); necessita adicionar: Ano, Mês e Dia */  
+	/*clock.fillByHMS(??,??,??); necessita adicionar: Hora, Minutos e Segundos */ 
+	/*clock.fillDayOfWeek(SAT); necessita adicionar a tag do dia de ligamento */
+	/*clock.setTime(); */
 
 /************* Conectanto a Rede  *************/  
   WiFi.begin(ssid, password);     // Passando as inforamações para conexão
