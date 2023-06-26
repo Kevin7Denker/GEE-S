@@ -1,0 +1,23 @@
+*{
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+body{
+    width: 100vw;
+    height: 100vh;
+}
+
+#grafico{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+canvas #myChart{
+    width: 60vw;
+    height: 60vh;
+}
